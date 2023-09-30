@@ -32,6 +32,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Platform Settings")
 	float Speed = 200.f;
 
+	/** Time to wait before switching directions */
+	UPROPERTY(EditAnywhere, Category = "Platform Settings")
+	float WaitTime = 5.f;
+
 	/** Gadget to set where platform should end */
 	UPROPERTY(EditAnywhere, Category = "Platform Settings", Meta = (MakeEditWidget = true))
 	FVector TargetLocation;
@@ -52,6 +56,8 @@ private:
 	/** Private property for tracking of platform movement state */
 	bool IsActive;
 
+	bool IsEndOfLine = false;
+	bool CanContinue = true;
 
 protected:
 	UFUNCTION()
@@ -61,5 +67,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void ChangeDirection();
 	virtual void Tick(float DeltaTime) override;
 };

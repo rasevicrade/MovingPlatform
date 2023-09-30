@@ -55,11 +55,20 @@ void APlatform::BeginPlay()
 	}
 }
 
+void APlatform::ChangeDirection()
+{
+	const FVector TempLocation = WorldStartLocation;
+	WorldStartLocation = WorldTargetLocation;
+	WorldTargetLocation = TempLocation;
+	IsEndOfLine = false;
+	CanContinue = true;
+}
+
 void APlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!IsActive)
+	if (!IsActive || !CanContinue)
 		return;
 
 	if (HasAuthority())
@@ -67,9 +76,16 @@ void APlatform::Tick(float DeltaTime)
 		FVector Location = GetActorLocation();
 		if (FVector::Distance(Location, WorldStartLocation) > FVector::Distance(WorldTargetLocation, WorldStartLocation))
 		{
-			const FVector TempLocation = WorldStartLocation;
-			WorldStartLocation = WorldTargetLocation;
-			WorldTargetLocation = TempLocation;
+			if (!IsEndOfLine)
+			{
+				IsEndOfLine = true;
+				CanContinue = false;
+				FTimerHandle TimerHandle;
+				GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &APlatform::ChangeDirection),WaitTime, false);
+
+				return;
+			}
+			
 		}
 		const FVector Direction = (WorldTargetLocation - WorldStartLocation).GetSafeNormal();
 		Location += Speed * DeltaTime * Direction;
