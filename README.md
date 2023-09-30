@@ -10,3 +10,6 @@ A Unreal Engine 5.2 plugin, allowing user to create a simple triggerable moving 
 - Is Self Triggered - If toggled, use volume present on platform to activate movement
 - Speed - Moving speed of the platform
 - Target Location - Movable widget for the target end location for platform
+
+# Installation
+Clone the repository and copy the content to your UE projects Plugins folder
