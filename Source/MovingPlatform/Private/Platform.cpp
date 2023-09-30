@@ -5,6 +5,8 @@
 APlatform::APlatform()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	TargetLocation += FVector(300, 0, 0);
+	IsSelfTriggered = false;
 
 	TriggerVolume = CreateDefaultSubobject<UBoxComponent>(FName("TriggerVolume"));
 	if (!TriggerVolume)
@@ -42,8 +44,11 @@ void APlatform::BeginPlay()
 			IsActive = true;
 		}
 
-		TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APlatform::OnOverlapBegin);
-		TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APlatform::OnOverlapEnd);
+		if (IsSelfTriggered)
+		{
+			TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APlatform::OnOverlapBegin);
+			TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APlatform::OnOverlapEnd);
+		}
 
 		SetReplicates(true);
 		SetReplicateMovement(true);
